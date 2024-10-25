@@ -1,0 +1,38 @@
+import os
+import shutil
+from pathlib import Path
+
+
+def divide_images(input_dir, output_dir, images_per_folder):
+    # Создание папки output_dir, если она не существует
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
+
+    # Получение списка всех изображений в input_dir
+    images = [f for f in os.listdir(input_dir) if os.path.isfile(os.path.join(input_dir, f))]
+
+    # Подсчет количества папок, которые нужно создать
+    num_folders = (len(images) + images_per_folder - 1) // images_per_folder
+
+    for i in range(num_folders):
+        folder_name = os.path.join(output_dir, f'folder_{i + 1}')
+        Path(folder_name).mkdir(parents=True, exist_ok=True)
+
+        # Получение подмножества изображений для текущей папки
+        subset = images[i * images_per_folder:(i + 1) * images_per_folder]
+
+        for image in subset:
+            src_path = os.path.join(input_dir, image)
+            dst_path = os.path.join(folder_name, image)
+            shutil.copy(src_path, dst_path)
+        print(f'Создана папка {folder_name} с {len(subset)} изображениями.')
+
+
+if __name__ == "__main__":
+    input_directory = 'in'
+    output_directory = 'out'
+
+    # Запрос у пользователя количества изображений на папку
+    images_per_folder = int(input('Введите количество изображений на папку: '))
+
+    # Запуск функции с аргументами
+    divide_images(input_directory, output_directory, images_per_folder)
